@@ -1,0 +1,53 @@
+{
+  "name": "koa-gen",
+  "version": "1.0.0",
+  "description": "Koa' application generator for Koa v1.x and v2.x",
+  "main": "bin/koa",
+  "scripts": {
+    "test": "mocha --globals hasCert --reporter spec --bail test/",
+    "test-ci": "mocha --reporter spec --check-leaks test/"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "koa": "./bin/koa"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dominhhai/koa-generator.git"
+  },
+  "author": "Do Minh Hai",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dominhhai/koa-generator/issues"
+  },
+  "homepage": "https://github.com/dominhhai/koa-generator#readme",
+  "keywords": [
+    "koa",
+    "framework",
+    "web",
+    "rest",
+    "restful",
+    "router",
+    "app",
+    "api"
+  ],
+  "dependencies": {
+    "commander": "2.7.1",
+    "mkdirp": "0.5.1",
+    "sorted-object": "1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "2.2.5",
+    "rimraf": "~2.2.8",
+    "supertest": "1.0.1"
+  },
+  "files": [
+    "LICENSE",
+    "bin/",
+    "templates1/",
+    "templates2/"
+  ],
+  "engines": {
+    "node": ">= 4.0"
+  }
+}
