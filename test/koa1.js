@@ -9,9 +9,9 @@ var rimraf = require('rimraf');
 var spawn = require('child_process').spawn;
 
 var binPath = path.resolve(__dirname, '../bin/koa');
-var tempDir = path.resolve(__dirname, '../temp');
+var tempDir = path.resolve(__dirname, '../koa1_temp');
 
-var timeout = 150000
+var timeout = 450000
 
 describe('koa(1)', function () {
   mocha.before(function (done) {
@@ -24,6 +24,7 @@ describe('koa(1)', function () {
     cleanup(done);
   });
 
+  // koa1
   describe('(no args)', function () {
     var dir;
     var files;
@@ -115,7 +116,7 @@ describe('koa(1)', function () {
       var app = require(file);
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
-      assert.equal(typeof app.createContext, 'function'); 
+      assert.equal(typeof app.createContext, 'function');
     });
 
     it('should respond to HTTP request', function (done) {
@@ -186,7 +187,7 @@ describe('koa(1)', function () {
       var app = require(file);
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
-      assert.equal(typeof app.createContext, 'function'); 
+      assert.equal(typeof app.createContext, 'function');
     });
 
     it('should respond to HTTP request', function (done) {
@@ -251,20 +252,20 @@ describe('koa(1)', function () {
       assert.notEqual(files.indexOf('views/index.jade'), -1);
       assert.notEqual(files.indexOf('views/layout.jade'), -1);
     });
-    
+
     it('should have installable dependencies', function (done) {
       this.timeout(timeout);
       npmInstall(dir, done);
     });
-    
+
     it('should export an koa app from app.js', function () {
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
-      assert.equal(typeof app.createContext, 'function'); 
+      assert.equal(typeof app.createContext, 'function');
     });
-    
+
     it('should respond to HTTP request', function (done) {
       var file = path.resolve(dir, 'app.js');
       var app = require(file);
@@ -371,7 +372,7 @@ describe('koa(1)', function () {
       var app = require(file);
       assert.equal(typeof app, 'object');
       assert.equal(typeof app.callback, 'function');
-      assert.equal(typeof app.createContext, 'function'); 
+      assert.equal(typeof app.createContext, 'function');
     });
 
     // it('should respond to HTTP request', function (done) {

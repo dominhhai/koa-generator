@@ -1,60 +1,53 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const Koa = require('koa')
+const app = new Koa()
+const router = require('koa-router')()
+const views = require('koa-views')
+const co = require('co')
+const convert = require('koa-convert')
+const json = require('koa-json')
+const onerror = require('koa-onerror')
+const bodyparser = require('koa-bodyparser')()
+const log4js = require('koa-log4')
+const logger = log4js.getLogger('app')
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+const index = require('./routes/index')
+const users = require('./routes/users')
 
-var app = express();
+// middlewares
+app.use(convert(bodyparser))
+app.use(convert(json()))
+app.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }))
+app.use(convert(require('koa-static')(__dirname + '/public')))
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', '{views}');
+onerror(app)
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());{css}
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(views(__dirname + '/views', {
+  extension: '{views}'
+}))
 
-app.use('/', routes);
-app.use('/users', users);
+// logger
+// app.use(async (ctx, next) => {
+//   const start = new Date()
+//   await next()
+//   const ms = new Date() - start
+//   logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`)
+// })
+app.use(co.wrap(function * (ctx, next) {
+  const start = new Date()
+  yield next()
+  const ms = new Date() - start
+  logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`)
+}))
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+router.use('/', index.routes(), index.allowedMethods())
+router.use('/users', users.routes(), users.allowedMethods())
 
-// error handlers
+app.use(router.routes(), router.allowedMethods())
+// response
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
+app.on('error', function (err, ctx) {
+  logger.error(err)
+  logger.error('server error', err, ctx)
+})
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
-
-module.exports = app;
+module.exports = app

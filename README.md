@@ -1,5 +1,5 @@
 # koa-generator
-Express like generator with standard style and gulp-nodemon
+Express like generator with [standard style](https://github.com/feross/standard) and gulp-nodemon
 
 ## Installation
 

@@ -199,15 +199,7 @@ function createApplication(app_name, dir) {
         test: 'gulp'
       }
       , dependencies: {
-          "co": "^4.6.0",
-          "koa": "^1.1.2",
-          "koa-bodyparser": "^2.0.1",
-          "koa-json": "^1.1.1",
-          "koa-log4": "^1.0.1",
-          "koa-onerror": "^1.2.1",
-          "koa-router": "^5.3.0",
-          "koa-static": "^1.5.2",
-          "koa-views": "^3.1.0"
+          "co": "^4.6.0"
       }
       , devDependencies: {
           "del": "^2.2.0",
@@ -219,6 +211,30 @@ function createApplication(app_name, dir) {
           "gulp-uglify": "^1.5.3"
       }
     }
+    pkg.dependencies = (program.koa === '1')
+                                          ? {
+                                              "co": "^4.6.0",
+                                              "koa": "^1.1.2",
+                                              "koa-bodyparser": "^2.0.1",
+                                              "koa-json": "^1.1.1",
+                                              "koa-log4": "^1.0.1",
+                                              "koa-onerror": "^1.2.1",
+                                              "koa-router": "^5.3.0",
+                                              "koa-static": "^1.5.2",
+                                              "koa-views": "^3.1.0"
+                                          }
+                                        : {
+                                            "co": "^4.6.0",
+                                            "koa": "^2.0.0",
+                                            "koa-bodyparser": "^2.0.1",
+                                            "koa-convert": "^1.2.0",
+                                            "koa-json": "^1.1.1",
+                                            "koa-log4": "^2.0.1",
+                                            "koa-onerror": "^1.2.1",
+                                            "koa-router": "^7.0.0",
+                                            "koa-static": "^1.5.2",
+                                            "koa-views": "^5.0.1"
+                                          }
 
     switch (program.template) {
       case 'jade':
@@ -347,12 +363,12 @@ function main() {
 
   // App name
   var appName = path.basename(path.resolve(destinationPath));
-  
+
   // Koa version
   program.koa = '2'
   if (program.koa1) program.koa = '1'
   templatesPath += program.koa
-  
+
   // Template engine
   program.template = 'jade';
   if (program.ejs) program.template = 'ejs';
