@@ -46,6 +46,7 @@ This generator can also be further configured with the following command line fl
     -h, --help          output usage information
     -V, --version       output the version number
     -1, --koa1          use Koa v1.x (defaults to Koa v2.x)
+    -b, --babel         use babel for Koa v2.x
     -e, --ejs           add ejs engine support (defaults to jade)
         --hbs           add handlebars engine support
     -H, --hogan         add hogan.js engine support
