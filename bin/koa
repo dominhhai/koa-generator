@@ -29,6 +29,7 @@ program
   .version(version)
   .usage('[options] [dir]')
   .option('-1, --koa1', 'use Koa v1.x (defaults to Koa v2.x)')
+  .option('-b, --babel', 'use babel for Koa v2.x')
   .option('-e, --ejs', 'add ejs engine support (defaults to jade)')
   .option('    --hbs', 'add handlebars engine support')
   .option('-H, --hogan', 'add hogan.js engine support')
@@ -168,19 +169,29 @@ function createApplication(app_name, dir) {
       complete();
     });
 
+    // Babel for Koa v2.x
+    if (program.babel) {
+      www = www.replace('{babel}', eol +
+`require('babel-core/register')({
+  presets: ['es2015-node5', 'stage-3']
+})`)
+    } else {
+      www = www.replace('{babel}', '')
+    }
+
     // CSS Engine support
     switch (program.css) {
       case 'less':
-        app = app.replace('{css}', eol + 'app.use(require(\'less-middleware\')(path.join(__dirname, \'public\')));');
+        app = app.replace('{css}', eol + 'app.use(require(\'less-middleware\')(path.join(__dirname, \'public\')))');
         break;
       case 'stylus':
-        app = app.replace('{css}', eol + 'app.use(require(\'stylus\').middleware(path.join(__dirname, \'public\')));');
+        app = app.replace('{css}', eol + 'app.use(require(\'stylus\').middleware(path.join(__dirname, \'public\')))');
         break;
       case 'compass':
-        app = app.replace('{css}', eol + 'app.use(require(\'node-compass\')({mode: \'expanded\'}));');
+        app = app.replace('{css}', eol + 'app.use(require(\'node-compass\')({mode: \'expanded\'}))');
         break;
       case 'sass':
-        app = app.replace('{css}', eol + 'app.use(require(\'node-sass-middleware\')({\n  src: path.join(__dirname, \'public\'),\n  dest: path.join(__dirname, \'public\'),\n  indentedSyntax: true,\n  sourceMap: true\n}));');
+        app = app.replace('{css}', eol + 'app.use(require(\'node-sass-middleware\')({\n  src: path.join(__dirname, \'public\'),\n  dest: path.join(__dirname, \'public\'),\n  indentedSyntax: true,\n  sourceMap: true\n}))');
         break;
       default:
         app = app.replace('{css}', '');
@@ -211,7 +222,7 @@ function createApplication(app_name, dir) {
           "gulp-uglify": "^1.5.3"
       }
     }
-    pkg.dependencies = (program.koa === '1')
+    pkg.dependencies = (program.koa1)
                                           ? {
                                               "co": "^4.6.0",
                                               "koa": "^1.1.2",
@@ -267,6 +278,13 @@ function createApplication(app_name, dir) {
         pkg.dependencies['node-sass-middleware'] = '0.8.0';
         break;
       default:
+    }
+
+    // Babel for Koa v2.x
+    if (program.babel) {
+      pkg.dependencies['babel-core'] = '^6.7.7'
+      pkg.dependencies['babel-preset-es2015-node5'] = '^1.2.0'
+      pkg.dependencies['babel-preset-stage-3'] = '^6.5.0'
     }
 
     // sort dependencies like npm(1)
@@ -368,6 +386,9 @@ function main() {
   program.koa = '2'
   if (program.koa1) program.koa = '1'
   templatesPath += program.koa
+  
+  // Babel
+  if (program.koa1) program.babel = false
 
   // Template engine
   program.template = 'jade';

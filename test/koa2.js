@@ -139,6 +139,123 @@ describe('koa(2)', function () {
     });
   });
 
+  describe('--babel', function () {
+    var dir;
+    var files;
+    var output;
+
+    mocha.before(function (done) {
+      createEnvironment(function (err, newDir) {
+        if (err) return done(err);
+        dir = newDir;
+        done();
+      });
+    });
+
+    mocha.after(function (done) {
+      this.timeout(timeout);
+      cleanup(dir, done);
+    });
+
+    it('should create basic app', function (done) {
+      run(dir, [], function (err, stdout) {
+        if (err) return done(err);
+        files = parseCreatedFiles(stdout, dir);
+        output = stdout;
+        assert.equal(files.length, 19);
+        done();
+      });
+    });
+
+    it('should provide debug instructions', function () {
+      assert.ok(/DEBUG=app-(?:[0-9\.]+):\* (?:\& )?npm start/.test(output));
+    });
+
+    it('should have basic files', function () {
+      assert.notEqual(files.indexOf('bin/www'), -1);
+      assert.notEqual(files.indexOf('app.js'), -1);
+      assert.notEqual(files.indexOf('gulpfile.js'), -1);
+      assert.notEqual(files.indexOf('log4js.json'), -1);
+      assert.notEqual(files.indexOf('package.json'), -1);
+    });
+
+    it('should have jade templates', function () {
+      assert.notEqual(files.indexOf('views/error.jade'), -1);
+      assert.notEqual(files.indexOf('views/index.jade'), -1);
+      assert.notEqual(files.indexOf('views/layout.jade'), -1);
+    });
+
+    it('should have a package.json file', function () {
+      var file = path.resolve(dir, 'package.json');
+      var contents = fs.readFileSync(file, 'utf8');
+      assert.equal(contents, '{\n'
+        + '  "name": ' + JSON.stringify(path.basename(dir)) + ',\n'
+        + '  "version": "0.0.0",\n'
+        + '  "private": true,\n'
+        + '  "scripts": {\n'
+        + '    "start": "node ./bin/www",\n'
+        + '    "test": "gulp"\n'
+        + '  },\n'
+        + '  "dependencies": {\n'
+        + '    "babel-core": "^6.7.7",\n'
+        + '    "babel-preset-es2015-node5": "^1.2.0",\n'
+        + '    "babel-preset-stage-3": "^6.5.0",\n'
+        + '    "co": "^4.6.0",\n'
+        + '    "jade": "~1.11.0",\n'
+        + '    "koa": "^2.0.0",\n'
+        + '    "koa-bodyparser": "^2.0.1",\n'
+        + '    "koa-convert": "^1.2.0",\n'
+        + '    "koa-json": "^1.1.1",\n'
+        + '    "koa-log4": "^2.0.1",\n'
+        + '    "koa-onerror": "^1.2.1",\n'
+        + '    "koa-router": "^7.0.0",\n'
+        + '    "koa-static": "^1.5.2",\n'
+        + '    "koa-views": "^5.0.1"\n'
+        + '  },\n'
+        + '  "devDependencies": {\n'
+        + '    "del": "^2.2.0",\n'
+        + '    "gulp": "^3.9.1",\n'
+        + '    "gulp-concat": "^2.6.0",\n'
+        + '    "gulp-cssmin": "^0.1.7",\n'
+        + '    "gulp-nodemon": "^2.0.6",\n'
+        + '    "gulp-sourcemaps": "^1.6.0",\n'
+        + '    "gulp-uglify": "^1.5.3"\n'
+        + '  }\n'
+        + '}');
+    });
+
+    it('should have installable dependencies', function (done) {
+      this.timeout(timeout);
+      npmInstall(dir, done);
+    });
+
+    it('should export an koa app from app.js', function () {
+      var file = path.resolve(dir, 'app.js');
+      var app = require(file);
+      assert.equal(typeof app, 'object');
+      assert.equal(typeof app.callback, 'function');
+      assert.equal(typeof app.createContext, 'function');
+    });
+
+    it('should respond to HTTP request', function (done) {
+      var file = path.resolve(dir, 'app.js');
+      var app = require(file);
+
+      request(app.callback())
+      .get('/')
+      .expect(200, /<title>Welcome to Koa<\/title>/, done);
+    });
+
+    it('should generate a 404', function (done) {
+      var file = path.resolve(dir, 'app.js');
+      var app = require(file);
+
+      request(app.callback())
+      .get('/does_not_exist')
+      .expect(404, /Not Found/, done);
+    });
+  });
+
   describe('--ejs', function () {
     var dir;
     var files;

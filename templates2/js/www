@@ -3,10 +3,9 @@
 /**
  * Module dependencies.
  */
-
-var app = require('../app')
-var debug = require('debug')('demo:server')
-var http = require('http')
+{babel}
+const app = require('../app')
+const http = require('http')
 const path = require('path')
 
 const appDir = path.resolve(__dirname, '..')
