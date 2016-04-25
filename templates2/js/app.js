@@ -19,8 +19,10 @@ app.use(convert(json()))
 app.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }))
 app.use(convert(require('koa-static')(__dirname + '/public')))
 
+// handle error
 onerror(app)
 
+// setup view
 app.use(views(__dirname + '/views', {
   extension: '{views}'
 }))
@@ -39,12 +41,15 @@ app.use(co.wrap(function * (ctx, next) {
   logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`)
 }))
 
+// routes definition
 router.use('/', index.routes(), index.allowedMethods())
 router.use('/users', users.routes(), users.allowedMethods())
 
-app.use(router.routes(), router.allowedMethods())
-// response
+// mount root routes
+app.use(router.routes())
+	.use(router.allowedMethods())
 
+// log error
 app.on('error', function (err, ctx) {
   logger.error(err)
   logger.error('server error', err, ctx)

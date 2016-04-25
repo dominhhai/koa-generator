@@ -10,17 +10,21 @@ const logger = log4js.getLogger('app')
 const index = require('./routes/index')
 const users = require('./routes/users')
 
-// global middlewares
-app.use(views('views', {
-  root: path.join(__dirname, 'views'),
-  default: '{views}'
-}))
+// middlewares
 app.use(require('koa-bodyparser')())
 app.use(json())
 app.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }))
 
+// setup view
+app.use(views('views', {
+  root: path.join(__dirname, 'views'),
+  default: '{views}'
+}))
+
+// handle error
 onerror(app)
 
+// logger
 app.use(function *(next) {
   var start = new Date()
   yield next
@@ -36,7 +40,9 @@ koa.use('/users', users.routes(), users.allowedMethods())
 
 // mount root routes
 app.use(koa.routes())
+	.use(router.allowedMethods())
 
+// log error
 app.on('error', function (err, ctx) {
   logger.error('server error', err, ctx)
 })
