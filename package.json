@@ -1,6 +1,6 @@
 {
   "name": "koa-gen",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Koa' application generator for Koa v1.x and v2.x",
   "main": "bin/koa",
   "scripts": {
