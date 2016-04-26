@@ -1,8 +1,9 @@
 const app = require('koa')()
-const koa = require('koa-router')()
+const router = require('koa-router')()
 const json = require('koa-json')
 const views = require('koa-views')
 const onerror = require('koa-onerror')
+const serve = require('koa-static')
 const path = require('path')
 const log4js = require('koa-log4')
 const logger = log4js.getLogger('app')
@@ -14,6 +15,7 @@ const users = require('./routes/users')
 app.use(require('koa-bodyparser')())
 app.use(json())
 app.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }))
+app.use(serve(path.join(__dirname, 'public')))
 
 // setup view
 app.use(views('views', {
@@ -32,14 +34,12 @@ app.use(function *(next) {
   logger.info('%s %s - %s', this.method, this.url, ms)
 })
 
-app.use(require('koa-static')(path.join(__dirname, 'public')))
-
 // routes definition
-koa.use('/', index.routes(), index.allowedMethods())
-koa.use('/users', users.routes(), users.allowedMethods())
+router.use('/', index.routes(), index.allowedMethods())
+router.use('/users', users.routes(), users.allowedMethods())
 
 // mount root routes
-app.use(koa.routes())
+app.use(router.routes())
 	.use(router.allowedMethods())
 
 // log error

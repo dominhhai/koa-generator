@@ -3,10 +3,11 @@ const app = new Koa()
 const router = require('koa-router')()
 const views = require('koa-views')
 const co = require('co')
-const convert = require('koa-convert')
 const json = require('koa-json')
 const onerror = require('koa-onerror')
 const bodyparser = require('koa-bodyparser')()
+const serve = require('koa-static')
+const path = require('path')
 const log4js = require('koa-log4')
 const logger = log4js.getLogger('app')
 
@@ -14,16 +15,16 @@ const index = require('./routes/index')
 const users = require('./routes/users')
 
 // middlewares
-app.use(convert(bodyparser))
-app.use(convert(json()))
+app.use(bodyparser)
+app.use(json())
 app.use(log4js.koaLogger(log4js.getLogger('http'), { level: 'auto' }))
-app.use(convert(require('koa-static')(__dirname + '/public')))
+app.use(serve(path.join(__dirname, 'public')))
 
 // handle error
 onerror(app)
 
 // setup view
-app.use(views(__dirname + '/views', {
+app.use(views(path.join(__dirname, 'views'), {
   extension: '{views}'
 }))
 

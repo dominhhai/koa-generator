@@ -86,13 +86,12 @@ describe('koa(2)', function () {
         + '    "co": "^4.6.0",\n'
         + '    "jade": "~1.11.0",\n'
         + '    "koa": "^2.0.0",\n'
-        + '    "koa-bodyparser": "^2.0.1",\n'
-        + '    "koa-convert": "^1.2.0",\n'
-        + '    "koa-json": "^1.1.1",\n'
+        + '    "koa-bodyparser": "^3.0.0",\n'
+        + '    "koa-json": "^2.0.0",\n'
         + '    "koa-log4": "^2.0.1",\n'
         + '    "koa-onerror": "^1.2.1",\n'
         + '    "koa-router": "^7.0.0",\n'
-        + '    "koa-static": "^1.5.2",\n'
+        + '    "koa-static": "^3.0.0",\n'
         + '    "koa-views": "^5.0.1"\n'
         + '  },\n'
         + '  "devDependencies": {\n'
@@ -158,7 +157,7 @@ describe('koa(2)', function () {
     });
 
     it('should create basic app', function (done) {
-      run(dir, [], function (err, stdout) {
+      run(dir, ['--babel'], function (err, stdout) {
         if (err) return done(err);
         files = parseCreatedFiles(stdout, dir);
         output = stdout;
@@ -203,13 +202,12 @@ describe('koa(2)', function () {
         + '    "co": "^4.6.0",\n'
         + '    "jade": "~1.11.0",\n'
         + '    "koa": "^2.0.0",\n'
-        + '    "koa-bodyparser": "^2.0.1",\n'
-        + '    "koa-convert": "^1.2.0",\n'
-        + '    "koa-json": "^1.1.1",\n'
+        + '    "koa-bodyparser": "^3.0.0",\n'
+        + '    "koa-json": "^2.0.0",\n'
         + '    "koa-log4": "^2.0.1",\n'
         + '    "koa-onerror": "^1.2.1",\n'
         + '    "koa-router": "^7.0.0",\n'
-        + '    "koa-static": "^1.5.2",\n'
+        + '    "koa-static": "^3.0.0",\n'
         + '    "koa-views": "^5.0.1"\n'
         + '  },\n'
         + '  "devDependencies": {\n'
